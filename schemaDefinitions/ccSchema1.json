@@ -5,10 +5,10 @@
     "payload": {
         "version": "1.0",
         "requestSchema": {
-            "uri": "https://sqbu-github.cisco.com/CCBU-CCOne/wccai-proto/blob/main/protos/dialog_connector/protobuf/com/cisco/wcc/ccai/v1/ccai-api.proto"
+            "uri": "xyz"
         },
         "responseSchema": {
-            "uri": "https://sqbu-github.cisco.com/CCBU-CCOne/wccai-proto/blob/main/protos/dialog_connector/protobuf/com/cisco/wcc/ccai/v1/ccai-api.proto"
+            "uri": "xyz"
         }
     },
     "supportedAppType": "serviceApp"
