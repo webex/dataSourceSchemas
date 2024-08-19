@@ -1,5 +1,5 @@
 {
-    "schemaId": "uuid123",
+    "schemaId": "5397013b-7920-4ffc-807c-e8a3e0a18f43",
     "serviceName": "VA service",
     "protocol": "gRPC",
     "payload": {
