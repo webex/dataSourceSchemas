@@ -5,10 +5,16 @@
     "payload": {
         "version": "1.0",
         "requestSchema": {
-            "uri": "xyz"
+            "uri": "xyz",
+            "requestPayloadSHA": ""
         },
         "responseSchema": {
-            "uri": "xyz"
+            "uri": "xyz",
+            "responsePayloadSHA": ""
+        },
+        "dependencyFiles": {
+            "uri": "",
+            "commonFilesSHA": ""
         }
     },
     "supportedAppType": "serviceApp"
