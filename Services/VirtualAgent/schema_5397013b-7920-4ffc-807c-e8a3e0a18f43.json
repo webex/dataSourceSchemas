@@ -5,16 +5,10 @@
     "payload": {
         "version": "1.0",
         "requestSchema": {
-            "uri": "xyz",
-            "requestPayloadSHA": ""
+            "uri": "https://github.com/webex/dataSourceSchemas/blob/main/Services/VirtualAgent/Proto/ccai-api.proto",
         },
         "responseSchema": {
-            "uri": "xyz",
-            "responsePayloadSHA": ""
-        },
-        "dependencyFiles": {
-            "uri": "",
-            "commonFilesSHA": ""
+            "uri": "https://github.com/webex/dataSourceSchemas/blob/main/Services/VirtualAgent/Proto/ccai-api.proto",
         }
     },
     "supportedAppType": "serviceApp"
