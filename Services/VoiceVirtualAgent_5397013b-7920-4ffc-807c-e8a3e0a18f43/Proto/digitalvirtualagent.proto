@@ -1,0 +1,133 @@
+/*
+This proto file has APIs for retrieving Digital virtual agent responses from the the upstream
+For the audio virtual agent requests that is sent from media service, relevant streaming
+audio virtual response will be sent by the upstream connectors.
+*/
+syntax = "proto3";
+
+package com.cisco.wcc.ccai.media.v1;
+
+import "google/protobuf/struct.proto";
+import "com/cisco/wcc/ccai/media/v1/common/media_service_common.proto";
+
+/*
+ Represents the Request format for Digital virtual agent request
+*/
+message DigitalVirtualAgentRequest {
+  // Conversation id (mapped to call id)
+  string conversation_id = 1;
+
+  // Customer organization ID.
+  string customer_org_id = 2;
+
+  // ID of the virtual agent that must be invoked.
+  string virtual_agent_id = 3;
+
+  // Indicates whether partial responses from the virtual agent are allowed.
+  bool allow_partial_responses = 4;
+
+  // Opaque object (JSON string?) carrying vendor-specific configuration or
+  // identifiers.
+  string vendor_specific_config = 5;
+
+  // One of text, dtmf, or input event must be included.
+  oneof digital_va_input_type {
+    // The text input from the user (plain text or SSML).
+    TextContent text_input = 6;
+
+    // Optional. DTMF events during the interaction.
+    DTMFInputs dtmf_input = 7;
+
+    // Optional. Input events, such as session start, session end, custom
+    // events, etc.
+    InputEvent event_input = 8;
+  }
+}
+
+// Represents the output of the digital virtual agent, which includes
+// response text and events.
+message DigitalVirtualAgentResponse {
+  // List of text responses to be sent back to the user.
+  repeated TextResponse text_responses = 1;
+
+  // Output events from the virtual agent, such as session end, transfer
+  // to human agent, or custom events.
+  repeated DigitalVAOutputEvent output_events = 2;
+
+  // Indicates whether the next input from the client is to be considered
+  // sensitive (e.g., for PCI compliance).
+  bool input_sensitive = 3;
+
+  // Indicates whether the response is partial or final.
+  bool is_partial = 4;
+
+  // Input mode for the next expected input (text, DTMF, or both).
+  DigitalInputMode input_mode = 5;
+
+  // Speech timers and DTMF configuration for handling input.
+  InputHandlingConfig input_handling_config = 6;
+}
+
+/*
+ Text response format
+*/
+message TextResponse {
+  // The response content can be either plain text or SSML.
+  oneof response_content {
+    // Plain text response.
+    string text = 1;
+
+    // SSML formatted response.
+    string ssml = 2;
+  }
+
+  // Indicates whether the response is the final chunk of a multi-part
+  // message.
+  bool final_chunk = 3;
+  // Whether the caller can barge in before the prompt is completely played out
+  bool caller_can_interrupt_va = 4;
+}
+
+// Type of input expected from the user.
+enum DigitalInputMode {
+  //unspecified input
+  INPUT_MODE_UNSPECIFIED = 0;
+
+  //text input
+  INPUT_TEXT = 1;
+
+  //voice dtmf input
+  INPUT_DTMF = 2;
+
+  //text dtmf input
+  INPUT_TEXT_DTMF = 3;
+}
+
+// Events that represent the state of the session or interaction.
+message DigitalVAOutputEvent {
+  //Type of events
+  enum DigitalVaEventType {
+    EVENT_UNSPECIFIED = 0;      //unspecified event
+    DIGITAL_VA_SESSION_END = 1;       // The session with the virtual agent has ended.
+    TRANSFER_TO_AGENT = 2; // Transfer the interaction to a human agent.
+    CUSTOM = 3;            // A custom event based on interaction logic.
+  }
+  //event type
+  DigitalVaEventType event_type = 1;
+  // Optional: additional event parameters.
+  google.protobuf.Struct parameters = 2;
+}
+
+
+// Service definition for the Digital Virtual Agent gRPC API.
+service DigitalVirtualAgent {
+
+  // Bidirectional streaming RPC to send and receive text, DTMF
+  // or input events.
+  rpc ProcessCallerInput(stream DigitalVirtualAgentRequest) returns (stream DigitalVirtualAgentResponse);
+
+  /*
+  The Service that takes virtual agent list request and org id and returns a list of bots
+  */
+  rpc ListVirtualAgents(ListVARequest) returns (ListVAResponse) {}
+}
