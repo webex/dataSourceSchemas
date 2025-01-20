@@ -6,7 +6,7 @@ Voice virtual response will be sent by the upstream connectors.
 syntax = "proto3";
 package com.cisco.wcc.ccai.media.v1;
 
-import "com/cisco/wcc/ccai/media/v1/common/media_service_common.proto";
+import "com/cisco/wcc/ccai/media/v1/common/byova_common.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
