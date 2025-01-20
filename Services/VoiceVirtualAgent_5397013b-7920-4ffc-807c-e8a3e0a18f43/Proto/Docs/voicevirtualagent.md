@@ -4,17 +4,15 @@
 ## Table of Contents
 
 - [voicevirtualagent.proto](#voicevirtualagent-proto)
-    - [OutputEvent](#com-cisco-wcc-ccai-media-v1-OutputEvent)
     - [Prompt](#com-cisco-wcc-ccai-media-v1-Prompt)
     - [VoiceInput](#com-cisco-wcc-ccai-media-v1-VoiceInput)
-    - [VoiceVirtualAgentRequest](#com-cisco-wcc-ccai-media-v1-VoiceVirtualAgentRequest)
-    - [VoiceVirtualAgentResponse](#com-cisco-wcc-ccai-media-v1-VoiceVirtualAgentResponse)
+    - [VoiceVARequest](#com-cisco-wcc-ccai-media-v1-VoiceVARequest)
+    - [VoiceVAResponse](#com-cisco-wcc-ccai-media-v1-VoiceVAResponse)
   
-    - [OutputEvent.EventType](#com-cisco-wcc-ccai-media-v1-OutputEvent-EventType)
     - [VoiceInput.VoiceEncoding](#com-cisco-wcc-ccai-media-v1-VoiceInput-VoiceEncoding)
     - [VoiceVAInputMode](#com-cisco-wcc-ccai-media-v1-VoiceVAInputMode)
   
-    - [AudioVirtualAgent](#com-cisco-wcc-ccai-media-v1-AudioVirtualAgent)
+    - [VoiceVirtualAgent](#com-cisco-wcc-ccai-media-v1-VoiceVirtualAgent)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -27,22 +25,6 @@
 This proto file has APIs for retrieving Audio virtual agent responses from the the upstream
 For the Voice virtual agent requests that is sent from media service, relevant streaming
 Voice virtual response will be sent by the upstream connectors.
-
-
-<a name="com-cisco-wcc-ccai-media-v1-OutputEvent"></a>
-
-### OutputEvent
-Events that represent the state of the session or call.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| event_type | [OutputEvent.EventType](#com-cisco-wcc-ccai-media-v1-OutputEvent-EventType) |  | input event type |
-| parameters | [google.protobuf.Struct](#google-protobuf-Struct) |  | Optional: additional event parameters. |
-
-
-
-
 
 
 <a name="com-cisco-wcc-ccai-media-v1-Prompt"></a>
@@ -84,9 +66,9 @@ Represents the voice input object
 
 
 
-<a name="com-cisco-wcc-ccai-media-v1-VoiceVirtualAgentRequest"></a>
+<a name="com-cisco-wcc-ccai-media-v1-VoiceVARequest"></a>
 
-### VoiceVirtualAgentRequest
+### VoiceVARequest
 Represents the Request format for voice virtual agent
 
 
@@ -99,16 +81,16 @@ Represents the Request format for voice virtual agent
 | vendor_specific_config | [string](#string) |  | Opaque object (JSON string?) carrying vendor-specific configuration or identifiers. |
 | audio_input | [VoiceInput](#com-cisco-wcc-ccai-media-v1-VoiceInput) |  | The voice input from the caller. |
 | dtmf_input | [DTMFInputs](#com-cisco-wcc-ccai-media-v1-DTMFInputs) |  | Optional. DTMF events during the call. |
-| event_input | [InputEvent](#com-cisco-wcc-ccai-media-v1-InputEvent) |  | Optional. Input events, such as call start, call end, no input, etc. |
+| event_input | [EventInput](#com-cisco-wcc-ccai-media-v1-EventInput) |  | Optional. Input events, such as call start, call end, no input, etc. |
 
 
 
 
 
 
-<a name="com-cisco-wcc-ccai-media-v1-VoiceVirtualAgentResponse"></a>
+<a name="com-cisco-wcc-ccai-media-v1-VoiceVAResponse"></a>
 
-### VoiceVirtualAgentResponse
+### VoiceVAResponse
 Represents the output of the virtual agent, which includes response audio,
 events, and configurations.
 
@@ -116,7 +98,7 @@ events, and configurations.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | prompts | [Prompt](#com-cisco-wcc-ccai-media-v1-Prompt) | repeated | List of prompt Voice responses to be played by the caller. |
-| output_events | [OutputEvent](#com-cisco-wcc-ccai-media-v1-OutputEvent) | repeated | Output events from the virtual agent, such as session end or transfer to human agent. |
+| output_events | [OutputEvent](#com-cisco-wcc-ccai-media-v1-OutputEvent) | repeated | Output events from the virtual agent, such as session end or transfer to human agent. As of now only one event will be supported and first event will be considered. |
 | input_sensitive | [bool](#bool) |  | Indicates whether the next input from the client is to be considered sensitive (e.g., for PCI compliance). |
 | is_partial | [bool](#bool) |  | Indicates whether the response is partial or final. |
 | input_mode | [VoiceVAInputMode](#com-cisco-wcc-ccai-media-v1-VoiceVAInputMode) |  | Input mode for next input |
@@ -131,21 +113,6 @@ events, and configurations.
  
 
 
-<a name="com-cisco-wcc-ccai-media-v1-OutputEvent-EventType"></a>
-
-### OutputEvent.EventType
-Possible types of events
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| VOICE_VA_EVENT_UNSPECIFIED | 0 | unspecified event |
-| VA_CALL_END | 1 | Call ended with the virtual agent. |
-| VOICE_TRANSFER_TO_AGENT | 2 | Transfer the call to a human agent. |
-| SESSION_END | 3 | End of session with the virtual agent. |
-| VOICE_CUSTOM_EVENT | 4 | Custom event based on interaction. |
-
-
-
 <a name="com-cisco-wcc-ccai-media-v1-VoiceInput-VoiceEncoding"></a>
 
 ### VoiceInput.VoiceEncoding
@@ -153,7 +120,7 @@ Encoding format of the audio data.
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| AUDIO_ENCODING_UNSPECIFIED | 0 |  |
+| UNSPECIFIED_FORMAT | 0 |  |
 | LINEAR16_FORMAT | 1 | 16-bit linear PCM. |
 | MULAW_FORMAT | 2 | G.711 mu-law. |
 | ALAW_FORMAT | 3 | G.711 A-law. |
@@ -178,14 +145,14 @@ Type of input expected from user
  
 
 
-<a name="com-cisco-wcc-ccai-media-v1-AudioVirtualAgent"></a>
+<a name="com-cisco-wcc-ccai-media-v1-VoiceVirtualAgent"></a>
 
-### AudioVirtualAgent
+### VoiceVirtualAgent
 Service definition for the Audio Virtual Agent gRPC API.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| ProcessCallerAudio | [VoiceVirtualAgentRequest](#com-cisco-wcc-ccai-media-v1-VoiceVirtualAgentRequest) stream | [VoiceVirtualAgentResponse](#com-cisco-wcc-ccai-media-v1-VoiceVirtualAgentResponse) stream | Bidirectional streaming RPC to send and receive caller audio, DTMF, or input events. |
+| ProcessCallerInput | [VoiceVARequest](#com-cisco-wcc-ccai-media-v1-VoiceVARequest) stream | [VoiceVAResponse](#com-cisco-wcc-ccai-media-v1-VoiceVAResponse) stream | Bidirectional streaming RPC to send and receive caller audio, DTMF, or input events. |
 | ListVirtualAgents | [ListVARequest](#com-cisco-wcc-ccai-media-v1-ListVARequest) | [ListVAResponse](#com-cisco-wcc-ccai-media-v1-ListVAResponse) | The Service that takes virtual agent list request and org id and returns a list of bots |
 
  

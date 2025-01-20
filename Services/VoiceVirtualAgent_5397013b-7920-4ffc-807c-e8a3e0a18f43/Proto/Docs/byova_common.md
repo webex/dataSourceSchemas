@@ -3,29 +3,31 @@
 
 ## Table of Contents
 
-- [media_service_common.proto](#media_service_common-proto)
+- [byova_common.proto](#byova_common-proto)
     - [DTMFInputConfig](#com-cisco-wcc-ccai-media-v1-DTMFInputConfig)
     - [DTMFInputs](#com-cisco-wcc-ccai-media-v1-DTMFInputs)
-    - [InputEvent](#com-cisco-wcc-ccai-media-v1-InputEvent)
+    - [EventInput](#com-cisco-wcc-ccai-media-v1-EventInput)
     - [InputHandlingConfig](#com-cisco-wcc-ccai-media-v1-InputHandlingConfig)
     - [InputSpeechTimers](#com-cisco-wcc-ccai-media-v1-InputSpeechTimers)
     - [ListVARequest](#com-cisco-wcc-ccai-media-v1-ListVARequest)
     - [ListVAResponse](#com-cisco-wcc-ccai-media-v1-ListVAResponse)
+    - [OutputEvent](#com-cisco-wcc-ccai-media-v1-OutputEvent)
     - [TextContent](#com-cisco-wcc-ccai-media-v1-TextContent)
     - [VirtualAgentInfo](#com-cisco-wcc-ccai-media-v1-VirtualAgentInfo)
     - [VirtualAgentInfo.AttributesEntry](#com-cisco-wcc-ccai-media-v1-VirtualAgentInfo-AttributesEntry)
   
     - [DTMFDigits](#com-cisco-wcc-ccai-media-v1-DTMFDigits)
-    - [InputEvent.EventType](#com-cisco-wcc-ccai-media-v1-InputEvent-EventType)
+    - [EventInput.EventType](#com-cisco-wcc-ccai-media-v1-EventInput-EventType)
+    - [OutputEvent.EventType](#com-cisco-wcc-ccai-media-v1-OutputEvent-EventType)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="media_service_common-proto"></a>
+<a name="byova_common-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## media_service_common.proto
+## byova_common.proto
 common Proto file for the media service flow
 
 
@@ -61,15 +63,15 @@ DTMF input digits
 
 
 
-<a name="com-cisco-wcc-ccai-media-v1-InputEvent"></a>
+<a name="com-cisco-wcc-ccai-media-v1-EventInput"></a>
 
-### InputEvent
+### EventInput
 Represents the Type of Events
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| event_type | [InputEvent.EventType](#com-cisco-wcc-ccai-media-v1-InputEvent-EventType) |  | input event type |
+| event_type | [EventInput.EventType](#com-cisco-wcc-ccai-media-v1-EventInput-EventType) |  | input event type |
 
 
 
@@ -141,6 +143,22 @@ Represents the Response format for List virtual agent
 
 
 
+<a name="com-cisco-wcc-ccai-media-v1-OutputEvent"></a>
+
+### OutputEvent
+Events that represent the state of the session or call.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| event_type | [OutputEvent.EventType](#com-cisco-wcc-ccai-media-v1-OutputEvent-EventType) |  | input event type |
+| parameters | [google.protobuf.Struct](#google-protobuf-Struct) |  | Optional: additional event parameters.custom event related info can also be passed here |
+
+
+
+
+
+
 <a name="com-cisco-wcc-ccai-media-v1-TextContent"></a>
 
 ### TextContent
@@ -150,7 +168,7 @@ Content of the text input
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | text | [string](#string) |  | Plain text input. |
-| ssml | [string](#string) |  | SSML formatted text input. |
+| ssml | [string](#string) |  | Optional. SSML formatted text input. |
 | language_code | [string](#string) |  | Language code ofF the user input, e.g., &#39;en-US&#39;. |
 
 
@@ -221,18 +239,36 @@ DTMF digits, including A, B, C, and D.
 
 
 
-<a name="com-cisco-wcc-ccai-media-v1-InputEvent-EventType"></a>
+<a name="com-cisco-wcc-ccai-media-v1-EventInput-EventType"></a>
 
-### InputEvent.EventType
+### EventInput.EventType
 Possible event types
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| EVENT_UNSPECIFIED | 0 | unspecified event |
+| UNSPECIFIED_INPUT | 0 | unspecified event |
 | SESSION_START | 1 | Event indicating the start of the interaction. for voice agent its call_start |
 | SESSION_END | 2 | Event indicating the end of the interaction.for voice agent its call_end |
 | NO_INPUT | 3 | Event indicating no input was received from the user. |
 | START_OF_DTMF | 4 | Event indicating start of DTMF input. |
+
+
+
+<a name="com-cisco-wcc-ccai-media-v1-OutputEvent-EventType"></a>
+
+### OutputEvent.EventType
+Possible types of events
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| UNSPECIFIED_EVENT | 0 | unspecified event |
+| SESSION_END | 1 | End of session with the virtual agent. |
+| TRANSFER_TO_AGENT | 2 | Transfer the call to a human agent. |
+| CUSTOM_EVENT | 3 | Custom event based on interaction. |
+| START_OF_INPUT | 4 | Triggers when user utter the first utterance in Voice Input mode or First DTMF is pressed in DTMF Input mode. This event to be used to BargeIn the prompt based on prompt barge-in flag. The event will be sent only if the current prompt being played is bargein enabled or prompt playing is complete. |
+| END_OF_INPUT | 5 | Sent when user utterance Voice / DTMF is complete. |
+| NO_MATCH | 6 | Sent when utterance did not match any of the accepted input |
+| NO_INPUT | 7 | Sent when no audio received with in the expected timeframe |
 
 
  
