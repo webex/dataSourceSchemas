@@ -13,7 +13,7 @@ import "google/protobuf/struct.proto";
 /*
  Represents the Request format for voice virtual agent
 */
-message VoiceVirtualAgentRequest {
+message VoiceVARequest {
   // Conversation id - mapped to call id.
   string conversation_id = 1;
 
@@ -39,7 +39,7 @@ message VoiceVirtualAgentRequest {
     DTMFInputs dtmf_input = 7;
 
     // Optional. Input events, such as call start, call end, no input, etc.
-    InputEvent event_input = 8;
+    EventInput event_input = 8;
   }
 }
 
@@ -52,7 +52,7 @@ message VoiceInput {
 
   // Encoding format of the audio data.
   enum VoiceEncoding {
-    AUDIO_ENCODING_UNSPECIFIED = 0;
+    UNSPECIFIED_FORMAT = 0;
     LINEAR16_FORMAT = 1; // 16-bit linear PCM.
     MULAW_FORMAT = 2;  // G.711 mu-law.
     ALAW_FORMAT = 3; // G.711 A-law.
@@ -74,12 +74,13 @@ message VoiceInput {
 
 // Represents the output of the virtual agent, which includes response audio,
 // events, and configurations.
-message VoiceVirtualAgentResponse {
+message VoiceVAResponse {
   // List of prompt Voice responses to be played by the caller.
   repeated Prompt prompts = 1;
 
   // Output events from the virtual agent, such as session end or transfer
   // to human agent.
+  //As of now only one event will be supported and first event will be considered.
   repeated OutputEvent output_events = 2;
 
   // Indicates whether the next input from the client is to be considered
@@ -125,27 +126,12 @@ enum VoiceVAInputMode {
   INPUT_VOICE_DTMF = 3;  //voice dtmf input
 }
 
-// Events that represent the state of the session or call.
-message OutputEvent {
-  //Possible types of events
-  enum EventType {
-    VOICE_VA_EVENT_UNSPECIFIED = 0;  //unspecified event
-    VA_CALL_END = 1;       // Call ended with the virtual agent.
-    VOICE_TRANSFER_TO_AGENT = 2; // Transfer the call to a human agent.
-    SESSION_END = 3;       // End of session with the virtual agent.
-    VOICE_CUSTOM_EVENT = 4;            // Custom event based on interaction.
-  }
-  //input event type
-  EventType event_type = 1;
-  google.protobuf.Struct parameters = 2; // Optional: additional event parameters.
-}
-
 // Service definition for the Audio Virtual Agent gRPC API.
-service AudioVirtualAgent {
+service VoiceVirtualAgent {
 
   // Bidirectional streaming RPC to send and receive caller audio, DTMF,
   // or input events.
-  rpc ProcessCallerAudio(stream VoiceVirtualAgentRequest) returns (stream VoiceVirtualAgentResponse);
+  rpc ProcessCallerInput(stream VoiceVARequest) returns (stream VoiceVAResponse);
 
   /*
  The Service that takes virtual agent list request and org id and returns a list of bots

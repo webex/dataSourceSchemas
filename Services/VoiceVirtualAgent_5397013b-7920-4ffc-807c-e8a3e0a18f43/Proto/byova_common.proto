@@ -4,6 +4,7 @@ common Proto file for the media service flow
 syntax = "proto3";
 
 package com.cisco.wcc.ccai.media.v1;
+import "google/protobuf/struct.proto";
 
 /*
  Content of the text input
@@ -14,7 +15,7 @@ message TextContent {
     // Plain text input.
     string text = 1;
 
-    // SSML formatted text input.
+    // Optional. SSML formatted text input.
     string ssml = 2;
   }
   // Language code ofF the user input, e.g., 'en-US'.
@@ -144,13 +145,40 @@ message ListVAResponse{
 
 }
 
+// Events that represent the state of the session or call.
+message OutputEvent {
+  //Possible types of events
+  enum EventType {
+    UNSPECIFIED_EVENT = 0;  //unspecified event
+    SESSION_END = 1;       // End of session with the virtual agent.
+    TRANSFER_TO_AGENT = 2; // Transfer the call to a human agent.
+    CUSTOM_EVENT = 3;            // Custom event based on interaction.
+    /*
+    Triggers when user utter the first utterance in Voice Input mode or First DTMF is pressed in DTMF Input mode.
+    This event to be used to BargeIn the prompt based on prompt barge-in flag.
+    The event will be sent only if the current prompt being played is bargein enabled or prompt playing is complete.
+  */
+    START_OF_INPUT = 4;
+    // Sent when user utterance Voice / DTMF is complete.
+    END_OF_INPUT = 5;
+    // Sent when utterance did not match any of the accepted input
+    NO_MATCH = 6;
+    // Sent when no audio received with in the expected timeframe
+    NO_INPUT = 7;
+  }
+  //input event type
+  EventType event_type = 1;
+  google.protobuf.Struct parameters = 2; // Optional: additional event parameters.custom event related info can also be passed here
+}
+
+
 /*
  Represents the Type of Events
 */
-message InputEvent {
+message EventInput {
   //Possible event types
   enum EventType {
-    EVENT_UNSPECIFIED = 0; // unspecified event
+    UNSPECIFIED_INPUT = 0; // unspecified event
     SESSION_START = 1;   // Event indicating the start of the interaction. for voice agent its call_start
     SESSION_END = 2;     // Event indicating the end of the interaction.for voice agent its call_end
     // Event indicating no input was received from the user.
