@@ -15,13 +15,13 @@ import "google/protobuf/struct.proto";
 */
 message VoiceVARequest {
   // Conversation id - mapped to call id.
-  string conversation_id = 1;
+  string conversation_id = 1; // Mandatory for all request
 
   // Customer organization ID.
-  string customer_org_id = 2;
+  string customer_org_id = 2; // Mandatory for all request
 
   // ID of the virtual agent that must be invoked.
-  string virtual_agent_id = 3;
+  string virtual_agent_id = 3; // Mandatory for all request
 
   // Indicates whether partial responses from the virtual agent are allowed.
   bool allow_partial_responses = 4;
@@ -31,7 +31,7 @@ message VoiceVARequest {
   string vendor_specific_config = 5;
 
   // One of voice, dtmf, or input event must be included.
-  oneof voice_va_input_type {
+  oneof voice_va_input_type { // Mandatory for all request
     // The voice input from the caller.
     VoiceInput audio_input = 6;
 
@@ -48,7 +48,7 @@ message VoiceVARequest {
 */
 message VoiceInput {
   // The raw audio bytes for the caller's audio stream.
-  bytes caller_audio = 1;
+  bytes caller_audio = 1; // Mandatory for all request
 
   // Encoding format of the audio data.
   enum VoiceEncoding {
@@ -57,16 +57,16 @@ message VoiceInput {
     MULAW_FORMAT = 2;  // G.711 mu-law.
     ALAW_FORMAT = 3; // G.711 A-law.
   }
-  VoiceEncoding encoding = 2;
+  VoiceEncoding encoding = 2; // Mandatory for all request
 
   // Sampling rate of the input audio in Hertz.
-  int32 sample_rate_hertz = 3;
+  int32 sample_rate_hertz = 3; // Mandatory for all request
 
   // Start timestamp of when the audio data was captured.
-  google.protobuf.Timestamp audio_timestamp = 4;
+  google.protobuf.Timestamp audio_timestamp = 4; // Mandatory for all request
 
   // Language code of the caller, e.g., 'en-US'.
-  string language_code = 5;
+  string language_code = 5; // Mandatory for all request
 
   // Indicates if the audio content represents a single utterance.
   bool is_single_utterance = 6;
@@ -94,7 +94,7 @@ message VoiceVAResponse {
   VoiceVAInputMode input_mode = 5;
 
   // Speech timers and DTMF configuration for handling input.
-  InputHandlingConfig input_handling_config = 6;
+  InputHandlingConfig input_handling_config = 6; // Mandatory for all request
 
   // Optional. Final transcript of entire session,
   // typically included in last response.
