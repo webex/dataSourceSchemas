@@ -111,7 +111,7 @@ message DTMFInputs {
 message ListVARequest {
 
   // Customer organization ID.
-  string customer_org_id = 1;
+  string customer_org_id = 1; // Mandatory for all request
 
   bool is_default_answers_enabled = 2; // default answers enabled / disabled - boolean value
   bool is_default_virtual_agent_enabled = 3; //default virtual agent enabled / disabled - boolean value
@@ -123,10 +123,10 @@ message ListVARequest {
 message VirtualAgentInfo{
 
   //Indicates the bots unique identifier
-  string virtual_agent_id = 1;
+  string virtual_agent_id = 1; // Mandatory for all request
 
   //Indicates the bot name
-  string virtual_agent_name = 2;
+  string virtual_agent_name = 2; // Mandatory for all request
 
   //Indicates whether the respective bot is a default bot for the selected provider
   bool is_default = 3;

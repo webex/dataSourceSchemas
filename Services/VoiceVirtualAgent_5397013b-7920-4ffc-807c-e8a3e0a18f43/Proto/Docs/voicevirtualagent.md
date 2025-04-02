@@ -4,16 +4,16 @@
 ## Table of Contents
 
 - [voicevirtualagent.proto](#voicevirtualagent-proto)
-    - [Prompt](#com-cisco-wcc-ccai-media-v1-Prompt)
-    - [VoiceInput](#com-cisco-wcc-ccai-media-v1-VoiceInput)
-    - [VoiceVARequest](#com-cisco-wcc-ccai-media-v1-VoiceVARequest)
-    - [VoiceVAResponse](#com-cisco-wcc-ccai-media-v1-VoiceVAResponse)
-  
-    - [VoiceInput.VoiceEncoding](#com-cisco-wcc-ccai-media-v1-VoiceInput-VoiceEncoding)
-    - [VoiceVAInputMode](#com-cisco-wcc-ccai-media-v1-VoiceVAInputMode)
-  
-    - [VoiceVirtualAgent](#com-cisco-wcc-ccai-media-v1-VoiceVirtualAgent)
-  
+  - [Prompt](#com-cisco-wcc-ccai-media-v1-Prompt)
+  - [VoiceInput](#com-cisco-wcc-ccai-media-v1-VoiceInput)
+  - [VoiceVARequest](#com-cisco-wcc-ccai-media-v1-VoiceVARequest)
+  - [VoiceVAResponse](#com-cisco-wcc-ccai-media-v1-VoiceVAResponse)
+
+  - [VoiceInput.VoiceEncoding](#com-cisco-wcc-ccai-media-v1-VoiceInput-VoiceEncoding)
+  - [VoiceVAInputMode](#com-cisco-wcc-ccai-media-v1-VoiceVAInputMode)
+
+  - [VoiceVirtualAgent](#com-cisco-wcc-ccai-media-v1-VoiceVirtualAgent)
+
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -54,11 +54,19 @@ Represents the voice input object
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| caller_audio | [bytes](#bytes) |  | The raw audio bytes for the caller&#39;s audio stream. |
-| encoding | [VoiceInput.VoiceEncoding](#com-cisco-wcc-ccai-media-v1-VoiceInput-VoiceEncoding) |  |  |
-| sample_rate_hertz | [int32](#int32) |  | Sampling rate of the input audio in Hertz. |
-| audio_timestamp | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Start timestamp of when the audio data was captured. |
-| language_code | [string](#string) |  | Language code of the caller, e.g., &#39;en-US&#39;. |
+| caller_audio | [bytes](#bytes) |  | The raw audio bytes for the caller&#39;s audio stream.
+
+Mandatory for all request |
+| encoding | [VoiceInput.VoiceEncoding](#com-cisco-wcc-ccai-media-v1-VoiceInput-VoiceEncoding) |  | Mandatory for all request |
+| sample_rate_hertz | [int32](#int32) |  | Sampling rate of the input audio in Hertz.
+
+Mandatory for all request |
+| audio_timestamp | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Start timestamp of when the audio data was captured.
+
+Mandatory for all request |
+| language_code | [string](#string) |  | Language code of the caller, e.g., &#39;en-US&#39;.
+
+Mandatory for all request |
 | is_single_utterance | [bool](#bool) |  | Indicates if the audio content represents a single utterance. |
 
 
@@ -74,9 +82,15 @@ Represents the Request format for voice virtual agent
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| conversation_id | [string](#string) |  | Conversation id - mapped to call id. |
-| customer_org_id | [string](#string) |  | Customer organization ID. |
-| virtual_agent_id | [string](#string) |  | ID of the virtual agent that must be invoked. |
+| conversation_id | [string](#string) |  | Conversation id - mapped to call id.
+
+Mandatory for all request |
+| customer_org_id | [string](#string) |  | Customer organization ID.
+
+Mandatory for all request |
+| virtual_agent_id | [string](#string) |  | ID of the virtual agent that must be invoked.
+
+Mandatory for all request |
 | allow_partial_responses | [bool](#bool) |  | Indicates whether partial responses from the virtual agent are allowed. |
 | vendor_specific_config | [string](#string) |  | Opaque object (JSON string?) carrying vendor-specific configuration or identifiers. |
 | audio_input | [VoiceInput](#com-cisco-wcc-ccai-media-v1-VoiceInput) |  | The voice input from the caller. |
@@ -102,7 +116,9 @@ events, and configurations.
 | input_sensitive | [bool](#bool) |  | Indicates whether the next input from the client is to be considered sensitive (e.g., for PCI compliance). |
 | is_partial | [bool](#bool) |  | Indicates whether the response is partial or final. |
 | input_mode | [VoiceVAInputMode](#com-cisco-wcc-ccai-media-v1-VoiceVAInputMode) |  | Input mode for next input |
-| input_handling_config | [InputHandlingConfig](#com-cisco-wcc-ccai-media-v1-InputHandlingConfig) |  | Speech timers and DTMF configuration for handling input. |
+| input_handling_config | [InputHandlingConfig](#com-cisco-wcc-ccai-media-v1-InputHandlingConfig) |  | Speech timers and DTMF configuration for handling input.
+
+Mandatory for all request |
 | session_transcript | [TextContent](#com-cisco-wcc-ccai-media-v1-TextContent) |  | Optional. Final transcript of entire session, typically included in last response. Transcripts included in intermediate responses are ignored. |
 | session_summary | [TextContent](#com-cisco-wcc-ccai-media-v1-TextContent) |  | Optional. Summary of the session, included in the last response. Summary included in intermediate responses are ignored. SSML does not make sense for summary. Using TextContent so that language code can be used. |
 
@@ -110,7 +126,7 @@ events, and configurations.
 
 
 
- 
+
 
 
 <a name="com-cisco-wcc-ccai-media-v1-VoiceInput-VoiceEncoding"></a>
@@ -140,9 +156,9 @@ Type of input expected from user
 | INPUT_VOICE_DTMF | 3 | voice dtmf input |
 
 
- 
 
- 
+
+
 
 
 <a name="com-cisco-wcc-ccai-media-v1-VoiceVirtualAgent"></a>
@@ -155,7 +171,7 @@ Service definition for the Audio Virtual Agent gRPC API.
 | ProcessCallerInput | [VoiceVARequest](#com-cisco-wcc-ccai-media-v1-VoiceVARequest) stream | [VoiceVAResponse](#com-cisco-wcc-ccai-media-v1-VoiceVAResponse) stream | Bidirectional streaming RPC to send and receive caller audio, DTMF, or input events. |
 | ListVirtualAgents | [ListVARequest](#com-cisco-wcc-ccai-media-v1-ListVARequest) | [ListVAResponse](#com-cisco-wcc-ccai-media-v1-ListVAResponse) | The Service that takes virtual agent list request and org id and returns a list of bots |
 
- 
+
 
 
 
