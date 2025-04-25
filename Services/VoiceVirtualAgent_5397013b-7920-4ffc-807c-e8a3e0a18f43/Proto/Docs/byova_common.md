@@ -72,6 +72,8 @@ Represents the Type of Events
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | event_type | [EventInput.EventType](#com-cisco-wcc-ccai-media-v1-EventInput-EventType) |  | input event type |
+| name | [string](#string) |  | Optional: The identifier used to send custom data with the events like call_start/session_start,call_end/session_end |
+| parameters | [google.protobuf.Struct](#google-protobuf-Struct) |  | Optional: The custom data of the event, passed as a map(key, value) |
 
 
 
@@ -119,8 +121,9 @@ Represents the Request format for List virtual agent
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| customer_org_id | [string](#string) |  | Customer organization ID. |
-| is_default_answers_enabled | [bool](#bool) |  | default answers enabled / disabled - boolean value |
+| customer_org_id | [string](#string) |  | Customer organization ID.
+
+Mandatory for all request |
 | is_default_virtual_agent_enabled | [bool](#bool) |  | default virtual agent enabled / disabled - boolean value |
 
 
@@ -152,7 +155,8 @@ Events that represent the state of the session or call.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | event_type | [OutputEvent.EventType](#com-cisco-wcc-ccai-media-v1-OutputEvent-EventType) |  | input event type |
-| parameters | [google.protobuf.Struct](#google-protobuf-Struct) |  | Optional: additional event parameters.custom event related info can also be passed here |
+| name | [string](#string) |  | Optional: The identifier used to send custom data with the events like session_start,transfer_to_agent |
+| metadata | [google.protobuf.Struct](#google-protobuf-Struct) |  | Optional: The custom data of the event, passed as a map(key, value) |
 
 
 
@@ -184,10 +188,14 @@ Represents the virtual agent information
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| virtual_agent_id | [string](#string) |  | Indicates the bots unique identifier |
-| virtual_agent_name | [string](#string) |  | Indicates the bot name |
+| virtual_agent_id | [string](#string) |  | Indicates the bots unique identifier
+
+Mandatory for all request |
+| virtual_agent_name | [string](#string) |  | Indicates the bot name
+
+Mandatory for all request |
 | is_default | [bool](#bool) |  | Indicates whether the respective bot is a default bot for the selected provider |
-| attributes | [VirtualAgentInfo.AttributesEntry](#com-cisco-wcc-ccai-media-v1-VirtualAgentInfo-AttributesEntry) | repeated | Any additional attributes that are required |
+| attributes | [VirtualAgentInfo.AttributesEntry](#com-cisco-wcc-ccai-media-v1-VirtualAgentInfo-AttributesEntry) | repeated | optional:Any additional attributes that are required |
 
 
 

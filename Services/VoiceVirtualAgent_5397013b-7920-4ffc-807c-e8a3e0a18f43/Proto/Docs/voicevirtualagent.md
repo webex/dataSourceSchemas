@@ -4,16 +4,18 @@
 ## Table of Contents
 
 - [voicevirtualagent.proto](#voicevirtualagent-proto)
-  - [Prompt](#com-cisco-wcc-ccai-media-v1-Prompt)
-  - [VoiceInput](#com-cisco-wcc-ccai-media-v1-VoiceInput)
-  - [VoiceVARequest](#com-cisco-wcc-ccai-media-v1-VoiceVARequest)
-  - [VoiceVAResponse](#com-cisco-wcc-ccai-media-v1-VoiceVAResponse)
-
-  - [VoiceInput.VoiceEncoding](#com-cisco-wcc-ccai-media-v1-VoiceInput-VoiceEncoding)
-  - [VoiceVAInputMode](#com-cisco-wcc-ccai-media-v1-VoiceVAInputMode)
-
-  - [VoiceVirtualAgent](#com-cisco-wcc-ccai-media-v1-VoiceVirtualAgent)
-
+    - [Prompt](#com-cisco-wcc-ccai-media-v1-Prompt)
+    - [VoiceInput](#com-cisco-wcc-ccai-media-v1-VoiceInput)
+    - [VoiceVARequest](#com-cisco-wcc-ccai-media-v1-VoiceVARequest)
+    - [VoiceVARequest.AdditionalInfoEntry](#com-cisco-wcc-ccai-media-v1-VoiceVARequest-AdditionalInfoEntry)
+    - [VoiceVAResponse](#com-cisco-wcc-ccai-media-v1-VoiceVAResponse)
+  
+    - [VoiceInput.VoiceEncoding](#com-cisco-wcc-ccai-media-v1-VoiceInput-VoiceEncoding)
+    - [VoiceVAInputMode](#com-cisco-wcc-ccai-media-v1-VoiceVAInputMode)
+    - [VoiceVAResponse.ResponseType](#com-cisco-wcc-ccai-media-v1-VoiceVAResponse-ResponseType)
+  
+    - [VoiceVirtualAgent](#com-cisco-wcc-ccai-media-v1-VoiceVirtualAgent)
+  
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -67,7 +69,7 @@ Mandatory for all request |
 | language_code | [string](#string) |  | Language code of the caller, e.g., &#39;en-US&#39;.
 
 Mandatory for all request |
-| is_single_utterance | [bool](#bool) |  | Indicates if the audio content represents a single utterance. |
+| is_single_utterance | [bool](#bool) |  | Indicates if the audio content represents a single utterance.Default value is false |
 
 
 
@@ -82,20 +84,37 @@ Represents the Request format for voice virtual agent
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| conversation_id | [string](#string) |  | Conversation id - mapped to call id.
+| conversation_id | [string](#string) |  | Conversation id - mapped to call id/interaction id
 
 Mandatory for all request |
 | customer_org_id | [string](#string) |  | Customer organization ID.
 
 Mandatory for all request |
-| virtual_agent_id | [string](#string) |  | ID of the virtual agent that must be invoked.
+| virtual_agent_id | [string](#string) |  | ID of the virtual agent that must be invoked. This will be provided by vendor using List virtual agent response
 
-Mandatory for all request |
+Optional |
 | allow_partial_responses | [bool](#bool) |  | Indicates whether partial responses from the virtual agent are allowed. |
-| vendor_specific_config | [string](#string) |  | Opaque object (JSON string?) carrying vendor-specific configuration or identifiers. |
+| vendor_specific_config | [string](#string) |  | mapped to ccai config created via Control hub |
 | audio_input | [VoiceInput](#com-cisco-wcc-ccai-media-v1-VoiceInput) |  | The voice input from the caller. |
 | dtmf_input | [DTMFInputs](#com-cisco-wcc-ccai-media-v1-DTMFInputs) |  | Optional. DTMF events during the call. |
 | event_input | [EventInput](#com-cisco-wcc-ccai-media-v1-EventInput) |  | Optional. Input events, such as call start, call end, no input, etc. |
+| additional_info | [VoiceVARequest.AdditionalInfoEntry](#com-cisco-wcc-ccai-media-v1-VoiceVARequest-AdditionalInfoEntry) | repeated | Optional:Map to capture any additional or miscellaneous info. For future use and not supported currently |
+
+
+
+
+
+
+<a name="com-cisco-wcc-ccai-media-v1-VoiceVARequest-AdditionalInfoEntry"></a>
+
+### VoiceVARequest.AdditionalInfoEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
 
 
 
@@ -113,20 +132,20 @@ events, and configurations.
 | ----- | ---- | ----- | ----------- |
 | prompts | [Prompt](#com-cisco-wcc-ccai-media-v1-Prompt) | repeated | List of prompt Voice responses to be played by the caller. |
 | output_events | [OutputEvent](#com-cisco-wcc-ccai-media-v1-OutputEvent) | repeated | Output events from the virtual agent, such as session end or transfer to human agent. As of now only one event will be supported and first event will be considered. |
-| input_sensitive | [bool](#bool) |  | Indicates whether the next input from the client is to be considered sensitive (e.g., for PCI compliance). |
-| is_partial | [bool](#bool) |  | Indicates whether the response is partial or final. |
+| input_sensitive | [bool](#bool) |  | Indicates whether the next input from the client is to be considered sensitive (e.g., for PCI compliance).Default value is false |
 | input_mode | [VoiceVAInputMode](#com-cisco-wcc-ccai-media-v1-VoiceVAInputMode) |  | Input mode for next input |
 | input_handling_config | [InputHandlingConfig](#com-cisco-wcc-ccai-media-v1-InputHandlingConfig) |  | Speech timers and DTMF configuration for handling input.
 
 Mandatory for all request |
 | session_transcript | [TextContent](#com-cisco-wcc-ccai-media-v1-TextContent) |  | Optional. Final transcript of entire session, typically included in last response. Transcripts included in intermediate responses are ignored. |
 | session_summary | [TextContent](#com-cisco-wcc-ccai-media-v1-TextContent) |  | Optional. Summary of the session, included in the last response. Summary included in intermediate responses are ignored. SSML does not make sense for summary. Using TextContent so that language code can be used. |
+| response_type | [VoiceVAResponse.ResponseType](#com-cisco-wcc-ccai-media-v1-VoiceVAResponse-ResponseType) |  | VA response type from provider (Partial/Final/Streaming) |
 
 
 
 
 
-
+ 
 
 
 <a name="com-cisco-wcc-ccai-media-v1-VoiceInput-VoiceEncoding"></a>
@@ -157,8 +176,21 @@ Type of input expected from user
 
 
 
+<a name="com-cisco-wcc-ccai-media-v1-VoiceVAResponse-ResponseType"></a>
+
+### VoiceVAResponse.ResponseType
 
 
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| FINAL | 0 | No more response expected |
+| PARTIAL | 1 | Expect more response from server |
+| CHUNK | 2 | To enable the streaming flow. |
+
+
+ 
+
+ 
 
 
 <a name="com-cisco-wcc-ccai-media-v1-VoiceVirtualAgent"></a>
@@ -171,7 +203,7 @@ Service definition for the Audio Virtual Agent gRPC API.
 | ProcessCallerInput | [VoiceVARequest](#com-cisco-wcc-ccai-media-v1-VoiceVARequest) stream | [VoiceVAResponse](#com-cisco-wcc-ccai-media-v1-VoiceVAResponse) stream | Bidirectional streaming RPC to send and receive caller audio, DTMF, or input events. |
 | ListVirtualAgents | [ListVARequest](#com-cisco-wcc-ccai-media-v1-ListVARequest) | [ListVAResponse](#com-cisco-wcc-ccai-media-v1-ListVAResponse) | The Service that takes virtual agent list request and org id and returns a list of bots |
 
-
+ 
 
 
 

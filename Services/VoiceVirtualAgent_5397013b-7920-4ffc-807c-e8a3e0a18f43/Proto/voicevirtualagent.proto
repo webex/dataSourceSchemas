@@ -6,7 +6,7 @@ Voice virtual response will be sent by the upstream connectors.
 syntax = "proto3";
 package com.cisco.wcc.ccai.media.v1;
 
-import "byova_common.proto";
+import "com/cisco/wcc/ccai/media/v1/common/byova_common.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
@@ -14,20 +14,19 @@ import "google/protobuf/struct.proto";
  Represents the Request format for voice virtual agent
 */
 message VoiceVARequest {
-  // Conversation id - mapped to call id.
+  // Conversation id - mapped to call id/interaction id
   string conversation_id = 1; // Mandatory for all request
 
   // Customer organization ID.
   string customer_org_id = 2; // Mandatory for all request
 
-  // ID of the virtual agent that must be invoked.
-  string virtual_agent_id = 3; // Mandatory for all request
+  // ID of the virtual agent that must be invoked. This will be provided by vendor using List virtual agent response
+  string virtual_agent_id = 3; // Optional
 
   // Indicates whether partial responses from the virtual agent are allowed.
   bool allow_partial_responses = 4;
 
-  // Opaque object (JSON string?) carrying vendor-specific configuration
-  // or identifiers.
+  // mapped to ccai config created via Control hub
   string vendor_specific_config = 5;
 
   // One of voice, dtmf, or input event must be included.
@@ -41,6 +40,7 @@ message VoiceVARequest {
     // Optional. Input events, such as call start, call end, no input, etc.
     EventInput event_input = 8;
   }
+  map<string, string> additional_info = 9; //Optional:Map to capture any additional or miscellaneous info. For future use and not supported currently
 }
 
 /*
@@ -68,7 +68,7 @@ message VoiceInput {
   // Language code of the caller, e.g., 'en-US'.
   string language_code = 5; // Mandatory for all request
 
-  // Indicates if the audio content represents a single utterance.
+  // Indicates if the audio content represents a single utterance.Default value is false
   bool is_single_utterance = 6;
 }
 
@@ -84,28 +84,33 @@ message VoiceVAResponse {
   repeated OutputEvent output_events = 2;
 
   // Indicates whether the next input from the client is to be considered
-  // sensitive (e.g., for PCI compliance).
+  // sensitive (e.g., for PCI compliance).Default value is false
   bool input_sensitive = 3;
 
-  // Indicates whether the response is partial or final.
-  bool is_partial = 4;
-
   // Input mode for next input
-  VoiceVAInputMode input_mode = 5;
+  VoiceVAInputMode input_mode = 4;
 
   // Speech timers and DTMF configuration for handling input.
-  InputHandlingConfig input_handling_config = 6; // Mandatory for all request
+  InputHandlingConfig input_handling_config = 5; // Mandatory for all request
 
   // Optional. Final transcript of entire session,
   // typically included in last response.
   // Transcripts included in intermediate responses are ignored.
-  TextContent session_transcript = 7;
+  TextContent session_transcript = 6;
 
   // Optional. Summary of the session, included in the last response.
   // Summary included in intermediate responses are ignored.
   // SSML does not make sense for summary.
   // Using TextContent so that language code can be used.
-  TextContent session_summary = 8;
+  TextContent session_summary = 7;
+
+  ResponseType response_type = 8;     // VA response type from provider (Partial/Final/Streaming)
+
+  enum ResponseType {
+    FINAL = 0;               // No more response expected
+    PARTIAL = 1;             // Expect more response from server
+    CHUNK = 2;               // To enable the streaming flow.
+  }
 }
 
 // Describes the prompt (Voice or text) to be played to the caller.

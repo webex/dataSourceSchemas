@@ -113,8 +113,7 @@ message ListVARequest {
   // Customer organization ID.
   string customer_org_id = 1; // Mandatory for all request
 
-  bool is_default_answers_enabled = 2; // default answers enabled / disabled - boolean value
-  bool is_default_virtual_agent_enabled = 3; //default virtual agent enabled / disabled - boolean value
+  bool is_default_virtual_agent_enabled = 2; //default virtual agent enabled / disabled - boolean value
 }
 
 /*
@@ -131,7 +130,7 @@ message VirtualAgentInfo{
   //Indicates whether the respective bot is a default bot for the selected provider
   bool is_default = 3;
 
-  // Any additional attributes that are required
+  // optional:Any additional attributes that are required
   map<string, string> attributes = 4;
 }
 
@@ -168,7 +167,8 @@ message OutputEvent {
   }
   //input event type
   EventType event_type = 1;
-  google.protobuf.Struct parameters = 2; // Optional: additional event parameters.custom event related info can also be passed here
+  string name = 2;                    // Optional: The identifier used to send custom data with the events like session_start,transfer_to_agent
+  google.protobuf.Struct metadata = 3; // Optional: The custom data of the event, passed as a map(key, value)
 }
 
 
@@ -187,4 +187,6 @@ message EventInput {
   }
   //input event type
   EventType event_type = 1;
+  string name = 2;                    // Optional: The identifier used to send custom data with the events like call_start/session_start,call_end/session_end
+  google.protobuf.Struct parameters = 3; // Optional: The custom data of the event, passed as a map(key, value)
 }
