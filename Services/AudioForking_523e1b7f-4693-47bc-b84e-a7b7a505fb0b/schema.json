@@ -5,10 +5,10 @@
     "payload": {
         "version": "1.0",
         "requestSchema": {
-            "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.5/Services/AudioForking_523e1b7f-4693-47bc-b84e-a7b7a505fb0b/Proto/conversationaudioforking.proto"
+            "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.6/Services/AudioForking_523e1b7f-4693-47bc-b84e-a7b7a505fb0b/Proto/conversationaudioforking.proto"
         },
         "responseSchema": {
-            "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.5/Services/AudioForking_523e1b7f-4693-47bc-b84e-a7b7a505fb0b/Proto/conversationaudioforking.proto"
+            "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.6/Services/AudioForking_523e1b7f-4693-47bc-b84e-a7b7a505fb0b/Proto/conversationaudioforking.proto"
         }
     },
     "supportedAppType": "serviceApp"
