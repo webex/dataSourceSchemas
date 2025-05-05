@@ -3,7 +3,7 @@ syntax = "proto3";
 package com.cisco.wcc.ccai.media.v1;
 
 import "google/protobuf/timestamp.proto";
-import "com/cisco/wcc/ccai/media/v1/common/media_service_common.proto";
+import "media_service_common.proto";
 
 // Request message for streaming conversation audio.
 message ConversationAudioForkingRequest {
