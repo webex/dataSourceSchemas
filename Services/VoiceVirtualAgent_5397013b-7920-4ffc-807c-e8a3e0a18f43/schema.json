@@ -5,10 +5,10 @@
     "payload": {
         "version": "1.0",
         "requestSchema": {
-            "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.6/Services/VoiceVirtualAgent_5397013b-7920-4ffc-807c-e8a3e0a18f43/Proto/voicevirtualagent.proto"
+            "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.8/Services/VoiceVirtualAgent_5397013b-7920-4ffc-807c-e8a3e0a18f43/Proto/voicevirtualagent.proto"
         },
         "responseSchema": {
-            "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.6/Services/VoiceVirtualAgent_5397013b-7920-4ffc-807c-e8a3e0a18f43/Proto/voicevirtualagent.proto"
+            "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.8/Services/VoiceVirtualAgent_5397013b-7920-4ffc-807c-e8a3e0a18f43/Proto/voicevirtualagent.proto"
         }
     },
     "supportedAppType": "serviceApp"
