@@ -28,13 +28,14 @@
 <p align="right"><a href="#top">Top</a></p>
 
 ## byova_common.proto
-common Proto file for the media service flow
+This file has the defintion of the common fields used in VoiceVirtualAgent.proto
 
 
 <a name="com-cisco-wcc-ccai-media-v1-DTMFInputConfig"></a>
 
 ### DTMFInputConfig
 Configuration for DTMF inputs.
+This is sent by VA(server) to inform client what dtmf configurations it is expecting from client
 
 
 | Field | Type | Label | Description |
@@ -66,12 +67,12 @@ DTMF input digits
 <a name="com-cisco-wcc-ccai-media-v1-EventInput"></a>
 
 ### EventInput
-Represents the Type of Events
+Represents the Type of Events sent by client
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| event_type | [EventInput.EventType](#com-cisco-wcc-ccai-media-v1-EventInput-EventType) |  | input event type |
+| event_type | [EventInput.EventType](#com-cisco-wcc-ccai-media-v1-EventInput-EventType) |  | input event type value |
 | name | [string](#string) |  | Optional: The identifier used to send custom data with the events like call_start/session_start,call_end/session_end |
 | parameters | [google.protobuf.Struct](#google-protobuf-Struct) |  | Optional: The custom data of the event, passed as a map(key, value) |
 
@@ -88,7 +89,7 @@ Configuration for capturing DTMF tones and speech timers.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| dtmf_config | [DTMFInputConfig](#com-cisco-wcc-ccai-media-v1-DTMFInputConfig) |  | DTMF input configurations. |
+| dtmf_config | [DTMFInputConfig](#com-cisco-wcc-ccai-media-v1-DTMFInputConfig) |  | This is sent by VA(server) to inform client what dtmf configurations it is expecting from client |
 | speech_timers | [InputSpeechTimers](#com-cisco-wcc-ccai-media-v1-InputSpeechTimers) |  | Represents the timer settings for speech recognition. |
 
 
@@ -116,7 +117,7 @@ Timers for controlling input collection timing.
 <a name="com-cisco-wcc-ccai-media-v1-ListVARequest"></a>
 
 ### ListVARequest
-Represents the Request format for List virtual agent
+Represents the Request format for List virtual agent RPC method.
 
 
 | Field | Type | Label | Description |
@@ -124,7 +125,7 @@ Represents the Request format for List virtual agent
 | customer_org_id | [string](#string) |  | Customer organization ID.
 
 Mandatory for all request |
-| is_default_virtual_agent_enabled | [bool](#bool) |  | default virtual agent enabled / disabled - boolean value |
+| is_default_virtual_agent_enabled | [bool](#bool) |  | default virtual agent enabled / disabled - boolean value In case of not selecting the VA, default agent will be picked up |
 
 
 
@@ -134,7 +135,7 @@ Mandatory for all request |
 <a name="com-cisco-wcc-ccai-media-v1-ListVAResponse"></a>
 
 ### ListVAResponse
-Represents the Response format for List virtual agent
+Represents the Response format for List virtual agent RPC method.
 
 
 | Field | Type | Label | Description |
@@ -149,12 +150,12 @@ Represents the Response format for List virtual agent
 <a name="com-cisco-wcc-ccai-media-v1-OutputEvent"></a>
 
 ### OutputEvent
-Events that represent the state of the session or call.
+Events that represent the state of the session or call. This is sent by VA(server)
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| event_type | [OutputEvent.EventType](#com-cisco-wcc-ccai-media-v1-OutputEvent-EventType) |  | input event type |
+| event_type | [OutputEvent.EventType](#com-cisco-wcc-ccai-media-v1-OutputEvent-EventType) |  | input event type value |
 | name | [string](#string) |  | Optional: The identifier used to send custom data with the events like session_start,transfer_to_agent |
 | metadata | [google.protobuf.Struct](#google-protobuf-Struct) |  | Optional: The custom data of the event, passed as a map(key, value) |
 
@@ -166,7 +167,7 @@ Events that represent the state of the session or call.
 <a name="com-cisco-wcc-ccai-media-v1-TextContent"></a>
 
 ### TextContent
-Content of the text input
+Definition of textContent.This is used by VA(server) to send transcripts.
 
 
 | Field | Type | Label | Description |
@@ -183,7 +184,7 @@ Content of the text input
 <a name="com-cisco-wcc-ccai-media-v1-VirtualAgentInfo"></a>
 
 ### VirtualAgentInfo
-Represents the virtual agent information
+Represents the virtual agent information sent as part of ListVirtualAgent response
 
 
 | Field | Type | Label | Description |
@@ -272,8 +273,8 @@ Possible types of events
 | UNSPECIFIED_EVENT | 0 | unspecified event |
 | SESSION_END | 1 | End of session with the virtual agent. |
 | TRANSFER_TO_AGENT | 2 | Transfer the call to a human agent. |
-| CUSTOM_EVENT | 3 | Custom event based on interaction. |
-| START_OF_INPUT | 4 | Triggers when user utter the first utterance in Voice Input mode or First DTMF is pressed in DTMF Input mode. This event to be used to BargeIn the prompt based on prompt barge-in flag. The event will be sent only if the current prompt being played is bargein enabled or prompt playing is complete. |
+| CUSTOM_EVENT | 3 | Custom event based on interaction. Can be used to send any custom data. |
+| START_OF_INPUT | 4 | Triggers when user utter the first utterance in Voice Input mode or First DTMF is pressed in DTMF Input mode. This event to be used to BargeIn the prompt based on prompt barge-in flag. The event will be sent only if the current prompt being played is barge-in enabled or prompt playing is complete. |
 | END_OF_INPUT | 5 | Sent when user utterance Voice / DTMF is complete. |
 | NO_MATCH | 6 | Sent when utterance did not match any of the accepted input |
 | NO_INPUT | 7 | Sent when no audio received with in the expected timeframe |
