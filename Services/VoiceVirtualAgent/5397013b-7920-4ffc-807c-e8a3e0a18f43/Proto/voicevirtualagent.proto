@@ -1,7 +1,6 @@
 /*
-This proto file has APIs for retrieving Audio virtual agent responses from the the upstream
-For the Voice virtual agent requests that is sent from media service, relevant streaming
-Voice virtual response will be sent by the upstream connectors.
+This proto file has the definition of RPC, request and response structures required to use BYoVA(Bring your own Virtual Agent)
+These definitions will be used for communication between client and VA(server) over gRPC
 */
 syntax = "proto3";
 package com.cisco.wcc.ccai.media.v1;
@@ -11,7 +10,7 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
 /*
- Represents the Request format for voice virtual agent
+ Represents the Request format to be sent by the client to communicate with VA(server)
 */
 message VoiceVARequest {
   // Conversation id - mapped to call id/interaction id
@@ -29,22 +28,24 @@ message VoiceVARequest {
   // mapped to ccai config created via Control hub
   string vendor_specific_config = 5;
 
+  // Type of input supported in the request.
   // One of voice, dtmf, or input event must be included.
   oneof voice_va_input_type { // Mandatory for all request
-    // The voice input from the caller.
+    // The voice input from the caller(caller audio)
     VoiceInput audio_input = 6;
 
-    // Optional. DTMF events during the call.
+    //DTMF events during the call.
     DTMFInputs dtmf_input = 7;
 
-    // Optional. Input events, such as call start, call end, no input, etc.
+    //Input events, such as call start, call end, no input, etc.
     EventInput event_input = 8;
   }
-  map<string, string> additional_info = 9; //Optional:Map to capture any additional or miscellaneous info. For future use and not supported currently
+  //Optional:Map to capture any additional or miscellaneous info.For future use and not supported currently
+  map<string, string> additional_info = 9;
 }
 
 /*
- Represents the voice input object
+ Represents the voice input object(captures information related to caller audio)
 */
 message VoiceInput {
   // The raw audio bytes for the caller's audio stream.
@@ -52,12 +53,12 @@ message VoiceInput {
 
   // Encoding format of the audio data.
   enum VoiceEncoding {
-    UNSPECIFIED_FORMAT = 0;
+    UNSPECIFIED_FORMAT = 0; // none
     LINEAR16_FORMAT = 1; // 16-bit linear PCM.
     MULAW_FORMAT = 2;  // G.711 mu-law.
     ALAW_FORMAT = 3; // G.711 A-law.
   }
-  VoiceEncoding encoding = 2; // Mandatory for all request
+  VoiceEncoding encoding = 2; // Value of selected encoding format.Mandatory for all request
 
   // Sampling rate of the input audio in Hertz.
   int32 sample_rate_hertz = 3; // Mandatory for all request
@@ -69,28 +70,29 @@ message VoiceInput {
   string language_code = 5; // Mandatory for all request
 
   // Indicates if the audio content represents a single utterance.Default value is false
+  // This is sent by client if support of single utterance is required
   bool is_single_utterance = 6;
 }
 
-// Represents the output of the virtual agent, which includes response audio,
-// events, and configurations.
+// Represents the output of the virtual agent, which includes response audio, events, and configurations.
+// This is sent by VA(server) after processing the request.
 message VoiceVAResponse {
   // List of prompt Voice responses to be played by the caller.
   repeated Prompt prompts = 1;
 
-  // Output events from the virtual agent, such as session end or transfer
-  // to human agent.
+  // Output events from the virtual agent, such as session end or transfer to human agent.
   //As of now only one event will be supported and first event will be considered.
   repeated OutputEvent output_events = 2;
 
-  // Indicates whether the next input from the client is to be considered
-  // sensitive (e.g., for PCI compliance).Default value is false
+  // Indicates whether the next input from the client is to be considered sensitive (e.g., for PCI compliance).
+  // Default value is false
   bool input_sensitive = 3;
 
-  // Input mode for next input
+  // Input mode for next input(voice ,dtmf etc)
   VoiceVAInputMode input_mode = 4;
 
   // Speech timers and DTMF configuration for handling input.
+  // This tells client what is expected by VA(server) in terms of configurations.
   InputHandlingConfig input_handling_config = 5; // Mandatory for all request
 
   // Optional. Final transcript of entire session,
@@ -104,7 +106,8 @@ message VoiceVAResponse {
   // Using TextContent so that language code can be used.
   TextContent session_summary = 7;
 
-  ResponseType response_type = 8;     // VA response type from provider (Partial/Final/Streaming)
+  //Type of response VA is sending(Partial/Final/Chunk)
+  ResponseType response_type = 8;
 
   enum ResponseType {
     FINAL = 0;               // No more response expected
@@ -118,20 +121,19 @@ message Prompt {
   string text = 1; // Text of the prompt (if available).
   string audio_uri = 2; // URI of the audio to be played.
   bytes audio_content = 3; // Raw audio content.
-  bool is_final_chunk = 4; // Whether this is the final chunk of audio.
   // Whether the caller can barge in before the prompt is completely played out
-  bool is_barge_in_enabled = 5;
+  bool is_barge_in_enabled = 4;
 }
 
 // Type of input expected from user
 enum VoiceVAInputMode {
   INPUT_VOICE_MODE_UNSPECIFIED = 0; //unspecified input
-  INPUT_VOICE = 1;   //voice input
-  INPUT_EVENT_DTMF = 2; //event dtmf input
-  INPUT_VOICE_DTMF = 3;  //voice dtmf input
+  INPUT_VOICE = 1;   //voice input(caller audio)
+  INPUT_EVENT_DTMF = 2; //event dtmf input(dtmf events)
+  INPUT_VOICE_DTMF = 3;  //voice dtmf input(voice dtmf)
 }
 
-// Service definition for the Audio Virtual Agent gRPC API.
+// Service definition for the Voice Virtual Agent gRPC API.
 service VoiceVirtualAgent {
 
   // Bidirectional streaming RPC to send and receive caller audio, DTMF,
@@ -139,7 +141,8 @@ service VoiceVirtualAgent {
   rpc ProcessCallerInput(stream VoiceVARequest) returns (stream VoiceVAResponse);
 
   /*
- The Service that takes virtual agent list request and org id and returns a list of bots
+ The Service that takes virtual agent list request and org id and returns a list of bots.
+ Returned list is shown on flow(virtual agent v2 activity) to select specific VA/Bot
 */
   rpc ListVirtualAgents(ListVARequest) returns (ListVAResponse) {}
 }

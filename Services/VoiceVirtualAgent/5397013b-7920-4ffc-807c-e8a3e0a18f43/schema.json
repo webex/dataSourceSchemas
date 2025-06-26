@@ -1,0 +1,15 @@
+{
+    "schemaId": "5397013b-7920-4ffc-807c-e8a3e0a18f43",
+    "serviceName": "Voice Virtual Agent Service",
+    "protocol": "gRPC",
+    "payload": {
+        "version": "1.0",
+        "requestSchema": {
+            "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.9/Services/VoiceVirtualAgent/5397013b-7920-4ffc-807c-e8a3e0a18f43/Proto/voicevirtualagent.proto"
+        },
+        "responseSchema": {
+            "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.9/Services/VoiceVirtualAgent/5397013b-7920-4ffc-807c-e8a3e0a18f43/Proto/voicevirtualagent.proto"
+        }
+    },
+    "supportedAppType": "serviceApp"
+}

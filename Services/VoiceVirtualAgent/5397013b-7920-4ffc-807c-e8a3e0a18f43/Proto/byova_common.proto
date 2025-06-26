@@ -1,5 +1,5 @@
 /*
-common Proto file for the media service flow
+This file has the defintion of the common fields used in VoiceVirtualAgent.proto
 */
 syntax = "proto3";
 
@@ -7,7 +7,7 @@ package com.cisco.wcc.ccai.media.v1;
 import "google/protobuf/struct.proto";
 
 /*
- Content of the text input
+ Definition of textContent.This is used by VA(server) to send transcripts.
 */
 message TextContent {
   // The content can be either plain text or SSML.
@@ -28,14 +28,14 @@ message InputSpeechTimers {
   int32 max_speech_timeout_msec = 1;
   // Duration of silence after an utterance before concluding it's complete.
   int32 complete_timeout_msec = 2;
-  // Duration of silence after an utterance before concluding it's
-  // incomplete.
+  // Duration of silence after an utterance before concluding it's incomplete.
   int32 incomplete_timeout_msec = 3;
 }
 
 // Configuration for capturing DTMF tones and speech timers.
 message InputHandlingConfig {
-  DTMFInputConfig dtmf_config = 1; // DTMF input configurations.
+  // This is sent by VA(server) to inform client what dtmf configurations it is expecting from client
+  DTMFInputConfig dtmf_config = 1;
   // Represents the timer settings for speech recognition.
   InputSpeechTimers speech_timers = 2;
 }
@@ -93,6 +93,7 @@ enum DTMFDigits {
 }
 
 // Configuration for DTMF inputs.
+// This is sent by VA(server) to inform client what dtmf configurations it is expecting from client
 message DTMFInputConfig {
   // Timeout between two digits in milliseconds.
   int32 inter_digit_timeout_msec = 1;
@@ -106,18 +107,20 @@ message DTMFInputs {
 }
 
 /*
- Represents the Request format for List virtual agent
+ Represents the Request format for List virtual agent RPC method.
 */
 message ListVARequest {
 
   // Customer organization ID.
   string customer_org_id = 1; // Mandatory for all request
 
-  bool is_default_virtual_agent_enabled = 2; //default virtual agent enabled / disabled - boolean value
+  //default virtual agent enabled / disabled - boolean value
+  // In case of not selecting the VA, default agent will be picked up
+  bool is_default_virtual_agent_enabled = 2;
 }
 
 /*
- Represents the virtual agent information
+ Represents the virtual agent information sent as part of ListVirtualAgent response
 */
 message VirtualAgentInfo{
 
@@ -135,7 +138,7 @@ message VirtualAgentInfo{
 }
 
 /*
- Represents the Response format for List virtual agent
+ Represents the Response format for List virtual agent RPC method.
 */
 message ListVAResponse{
 
@@ -144,18 +147,18 @@ message ListVAResponse{
 
 }
 
-// Events that represent the state of the session or call.
+// Events that represent the state of the session or call. This is sent by VA(server)
 message OutputEvent {
   //Possible types of events
   enum EventType {
     UNSPECIFIED_EVENT = 0;  //unspecified event
     SESSION_END = 1;       // End of session with the virtual agent.
     TRANSFER_TO_AGENT = 2; // Transfer the call to a human agent.
-    CUSTOM_EVENT = 3;            // Custom event based on interaction.
+    CUSTOM_EVENT = 3;            // Custom event based on interaction. Can be used to send any custom data.
     /*
     Triggers when user utter the first utterance in Voice Input mode or First DTMF is pressed in DTMF Input mode.
     This event to be used to BargeIn the prompt based on prompt barge-in flag.
-    The event will be sent only if the current prompt being played is bargein enabled or prompt playing is complete.
+    The event will be sent only if the current prompt being played is barge-in enabled or prompt playing is complete.
   */
     START_OF_INPUT = 4;
     // Sent when user utterance Voice / DTMF is complete.
@@ -165,7 +168,7 @@ message OutputEvent {
     // Sent when no audio received with in the expected timeframe
     NO_INPUT = 7;
   }
-  //input event type
+  //input event type value
   EventType event_type = 1;
   string name = 2;                    // Optional: The identifier used to send custom data with the events like session_start,transfer_to_agent
   google.protobuf.Struct metadata = 3; // Optional: The custom data of the event, passed as a map(key, value)
@@ -173,7 +176,7 @@ message OutputEvent {
 
 
 /*
- Represents the Type of Events
+ Represents the Type of Events sent by client
 */
 message EventInput {
   //Possible event types
@@ -185,7 +188,7 @@ message EventInput {
     NO_INPUT = 3;
     START_OF_DTMF = 4;   // Event indicating start of DTMF input.
   }
-  //input event type
+  //input event type value
   EventType event_type = 1;
   string name = 2;                    // Optional: The identifier used to send custom data with the events like call_start/session_start,call_end/session_end
   google.protobuf.Struct parameters = 3; // Optional: The custom data of the event, passed as a map(key, value)
