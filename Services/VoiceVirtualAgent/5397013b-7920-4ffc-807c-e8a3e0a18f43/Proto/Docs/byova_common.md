@@ -15,11 +15,11 @@
     - [TextContent](#com-cisco-wcc-ccai-media-v1-TextContent)
     - [VirtualAgentInfo](#com-cisco-wcc-ccai-media-v1-VirtualAgentInfo)
     - [VirtualAgentInfo.AttributesEntry](#com-cisco-wcc-ccai-media-v1-VirtualAgentInfo-AttributesEntry)
-  
+
     - [DTMFDigits](#com-cisco-wcc-ccai-media-v1-DTMFDigits)
     - [EventInput.EventType](#com-cisco-wcc-ccai-media-v1-EventInput-EventType)
     - [OutputEvent.EventType](#com-cisco-wcc-ccai-media-v1-OutputEvent-EventType)
-  
+
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -218,7 +218,7 @@ Mandatory for all request |
 
 
 
- 
+
 
 
 <a name="com-cisco-wcc-ccai-media-v1-DTMFDigits"></a>
@@ -260,6 +260,7 @@ Possible event types
 | SESSION_END | 2 | Event indicating the end of the interaction.for voice agent its call_end |
 | NO_INPUT | 3 | Event indicating no input was received from the user. |
 | START_OF_DTMF | 4 | Event indicating start of DTMF input. |
+| CUSTOM_EVENT | 5 | It can be used to send data from client to server for custom events. |
 
 
 
@@ -280,11 +281,11 @@ Possible types of events
 | NO_INPUT | 7 | Sent when no audio received with in the expected timeframe |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -307,4 +308,3 @@ Possible types of events
 | <a name="bool" /> bool |  | bool | boolean | boolean | bool | bool | boolean | TrueClass/FalseClass |
 | <a name="string" /> string | A string must always contain UTF-8 encoded or 7-bit ASCII text. | string | String | str/unicode | string | string | string | String (UTF-8) |
 | <a name="bytes" /> bytes | May contain any arbitrary sequence of bytes. | string | ByteString | str | []byte | ByteString | string | String (ASCII-8BIT) |
-
