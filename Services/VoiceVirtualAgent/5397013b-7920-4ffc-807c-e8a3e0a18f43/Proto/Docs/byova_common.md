@@ -15,11 +15,11 @@
     - [TextContent](#com-cisco-wcc-ccai-media-v1-TextContent)
     - [VirtualAgentInfo](#com-cisco-wcc-ccai-media-v1-VirtualAgentInfo)
     - [VirtualAgentInfo.AttributesEntry](#com-cisco-wcc-ccai-media-v1-VirtualAgentInfo-AttributesEntry)
-
+  
     - [DTMFDigits](#com-cisco-wcc-ccai-media-v1-DTMFDigits)
     - [EventInput.EventType](#com-cisco-wcc-ccai-media-v1-EventInput-EventType)
     - [OutputEvent.EventType](#com-cisco-wcc-ccai-media-v1-OutputEvent-EventType)
-
+  
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -218,7 +218,7 @@ Mandatory for all request |
 
 
 
-
+ 
 
 
 <a name="com-cisco-wcc-ccai-media-v1-DTMFDigits"></a>
@@ -281,11 +281,11 @@ Possible types of events
 | NO_INPUT | 7 | Sent when no audio received with in the expected timeframe |
 
 
+ 
 
+ 
 
-
-
-
+ 
 
 
 
