@@ -187,6 +187,7 @@ message EventInput {
     // Event indicating no input was received from the user.
     NO_INPUT = 3;
     START_OF_DTMF = 4;   // Event indicating start of DTMF input.
+    CUSTOM_EVENT = 5; // It can be used to send data from client to server for custom events.
   }
   //input event type value
   EventType event_type = 1;
