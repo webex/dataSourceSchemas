@@ -168,9 +168,9 @@ Type of input expected from user
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | INPUT_VOICE_MODE_UNSPECIFIED | 0 | unspecified input |
-| INPUT_VOICE | 1 | voice input(caller audio) |
-| INPUT_EVENT_DTMF | 2 | event dtmf input(dtmf events) |
-| INPUT_VOICE_DTMF | 3 | voice dtmf input(voice dtmf) |
+| INPUT_VOICE | 1 | voice only (caller audio) |
+| INPUT_EVENT_DTMF | 2 | DTMF only |
+| INPUT_VOICE_DTMF | 3 | voice and DTMF (default option if input mode is not specified) |
 
 
 
