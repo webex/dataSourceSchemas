@@ -30,6 +30,8 @@ message InputSpeechTimers {
   int32 complete_timeout_msec = 2;
   // Duration of silence after an utterance before concluding it's incomplete.
   int32 incomplete_timeout_msec = 3;
+  // Maximum silence, in milliseconds, allowed while waiting for user input after recognition timers are started. A value of 0 means no timeout.
+  int32 no_input_timeout_msec = 4;
 }
 
 // Configuration for capturing DTMF tones and speech timers.
