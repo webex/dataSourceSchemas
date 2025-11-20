@@ -108,6 +108,7 @@ Timers for controlling input collection timing.
 | max_speech_timeout_msec | [int32](#int32) |  | Maximum duration of an utterance in milliseconds. |
 | complete_timeout_msec | [int32](#int32) |  | Duration of silence after an utterance before concluding it&#39;s complete. |
 | incomplete_timeout_msec | [int32](#int32) |  | Duration of silence after an utterance before concluding it&#39;s incomplete. |
+| no_input_timeout_msec | [int32](#int32) |  | Maximum silence, in milliseconds, allowed while waiting for user input after recognition timers are started. A value of 0 means no timeout. |
 
 
 
