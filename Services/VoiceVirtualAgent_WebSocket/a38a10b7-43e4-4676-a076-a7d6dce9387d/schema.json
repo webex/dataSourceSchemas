@@ -1,0 +1,25 @@
+{
+    "schemaId": "a38a10b7-43e4-4676-a076-a7d6dce9387d",
+    "serviceName": "Web Socket Voice Virtual Agent Service",
+    "protocol": "web-socket",
+    "payload": {
+        "version": "1.0",
+        "requestSchema": {
+            "voicevirtualagent": {
+                "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.12/Services/VoiceVirtualAgent_WebSocket/a38a10b7-43e4-4676-a076-a7d6dce9387d/AsyncApiSpec/voicevirtualagent_WsSchema.json"
+            },
+            "listvirtualagent": {
+                "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.12/Services/VoiceVirtualAgent_WebSocket/a38a10b7-43e4-4676-a076-a7d6dce9387d/AsyncApiSpec/voicevirtualagent_WsListVASchema.json"
+            }
+        },
+        "responseSchema": {
+            "voicevirtualagent": {
+                "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.12/Services/VoiceVirtualAgent_WebSocket/a38a10b7-43e4-4676-a076-a7d6dce9387d/AsyncApiSpec/voicevirtualagent_WsSchema.json"
+            },
+            "listvirtualagent": {
+                "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.12/Services/VoiceVirtualAgent_WebSocket/a38a10b7-43e4-4676-a076-a7d6dce9387d/AsyncApiSpec/voicevirtualagent_WsListVASchema.json"
+            }
+        }
+    },
+    "supportedAppType": "serviceApp"
+}
