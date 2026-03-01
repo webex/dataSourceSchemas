@@ -1,4 +1,8 @@
 # About
+
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+
+
 This repository includes schema definitions, used while creating BYoDS service apps. There is a unique schema for each use case.
 Schema definition is nothing but a defined structure which includes payload and other information for a specific use case.These schema definitions are defined and published by Webex teams so that partners/customers can build their side of solutions leveraging the defined format.
 For example Voice virtual agent schema incldues the structure information of voice virtual agent use case. Which is used by contact center platform and partners/customers to build solution.
