@@ -1,0 +1,15 @@
+{
+  "schemaId": "1b2b7077-dbcd-4732-b2f9-296f9168168a",
+  "serviceName": "Media Intelligence Forking Service",
+  "protocol": "gRPC",
+  "payload": {
+    "version": "1.0",
+    "requestSchema": {
+      "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.10/Services/MediaIntelligence/1b2b7077-dbcd-4732-b2f9-296f9168168a/Proto/multimedia.proto"
+    },
+    "responseSchema": {
+      "uri": "https://github.com/webex/dataSourceSchemas/blob/v1.10/Services/MediaIntelligence/1b2b7077-dbcd-4732-b2f9-296f9168168a/Proto/multimedia.proto"
+    }
+  },
+  "supportedAppType": "serviceApp"
+}

@@ -1,0 +1,374 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package com.cisco.wcc.ccai.media.v1;
+
+import "google/protobuf/struct.proto";
+
+// ==========================================================================
+// MultiMedia Streaming API
+//
+// Implement this service to receive real-time audio and video streams
+// from Webex Meetings.
+//
+// Each stream carries exactly one media type (audio, video, or control).
+// A session may have multiple audio and video streams, plus one control stream.
+//
+// The control stream is opened first via StreamControl RPC. Send MediaStreamRequest
+// on the control stream to specify which audio/video streams you want to receive.
+// Media streams are opened after the request is processed via StreamMedia RPC.
+// ==========================================================================
+
+service MultiMedia {
+    // Control stream: bidirectional stream for session control, roster updates,
+    // media stream requests, and commands.
+    // Opened first; exactly one per session.
+    rpc StreamControl(stream ControlRequest)
+        returns (stream ControlResponse);
+
+    // Media stream: unidirectional stream for audio or video frames.
+    // Receive-only from your server's perspective.
+    // Multiple streams per session (up to 3 audio + 3 video).
+    rpc StreamMedia(stream MediaRequest)
+        returns (stream MediaResponse);
+}
+
+
+// ==========================================================================
+// Control Stream Messages (StreamControl RPC)
+// ==========================================================================
+
+/*
+ * Inbound message received on the control stream.
+ * Used for session lifecycle, roster updates, and error notifications.
+ */
+message ControlRequest {
+    oneof payload {
+        StreamOpen     stream_open    = 1;  // First message — opens the control stream
+        ServiceData    service_data   = 2;  // Platform-specific data (e.g., roster updates)
+        StreamError    stream_error   = 3;  // Error reported by the platform
+        StreamClose    stream_close   = 4;  // Control stream termination
+    }
+}
+
+/*
+ * Outbound message sent on the control stream.
+ * Used to request media streams, send commands, and report errors.
+ */
+message ControlResponse {
+    oneof payload {
+        MediaStreamRequest  media_stream_request = 1;  // Request audio/video streams
+        ControlCommand      control_command      = 2;  // Commands — generic and platform-specific
+        StreamError         stream_error         = 3;  // Error reported by your server
+    }
+}
+
+
+// ==========================================================================
+// Media Stream Messages (StreamMedia RPC)
+// ==========================================================================
+
+/*
+ * Inbound message received on audio/video streams.
+ * Carries encoded media frames and stream lifecycle events.
+ */
+message MediaRequest {
+    oneof payload {
+        StreamOpen     stream_open    = 1;  // First message — opens the media stream
+        MediaPayload   media_payload  = 2;  // Encoded media frame
+        StreamClose    stream_close   = 3;  // Media stream termination
+    }
+}
+
+/*
+ * Outbound message sent on audio/video streams.
+ * Currently empty — media streams are receive-only.
+ * Reserved for future bidirectional media features.
+ */
+message MediaResponse {
+    // Reserved for future use (e.g., client-to-platform media)
+}
+
+
+// ==========================================================================
+// Common Messages (used by both RPCs)
+// ==========================================================================
+
+/*
+ * First message on every stream — opens the stream.
+ * Carries stream identification and session identity.
+ * Sent exactly once; pairs with StreamClose.
+ */
+message StreamOpen {
+    string    stream_id       = 1;   // Platform-assigned unique stream identifier
+    MediaType media_type      = 2;   // AUDIO, VIDEO, or CONTROL
+    string    org_id          = 3;   // Customer organization UUID
+    string    conversation_id = 4;   // Session identifier (meeting ID)
+    google.protobuf.Struct parameters = 5;   // Optional: custom key-value data from the platform
+}
+
+// Type of media carried on a stream
+enum MediaType {
+    MEDIA_TYPE_UNSPECIFIED = 0;
+    AUDIO   = 1;
+    VIDEO   = 2;
+    CONTROL = 3;
+}
+
+/* 
+ * Data to be passed to upstream.
+ * Includes platform or use case specific data like meeting data.
+ * Sent on the control stream only.
+ */
+message ServiceData {
+    oneof payload {
+        MeetingData meeting_data = 1;  // Meetings-specific data (roster updates)
+    }
+}
+
+/*
+ * A single encoded media frame.
+ * Carries encoded audio or video data with per-frame participant identity.
+ * Each gRPC stream carries frames for one media type.
+ * The codec matches what was requested in MediaStreamRequest.
+ * participant_id identifies whose audio or video is in each frame
+ * and may change between frames (e.g., active speaker switching).
+ */
+message MediaPayload {
+    bytes   data            = 1;   // Encoded frame data
+    int64   timestamp_ms    = 2;   // Capture timestamp (epoch ms), shared epoch across streams
+    uint64  sequence_number = 3;   // Monotonically increasing per stream, starting at 1
+    string  participant_id  = 4;   // Participant UUID
+}
+
+/*
+ * Stream termination.
+ * Sent as the final message on a stream before it is closed.
+ */
+message StreamClose {
+    CloseReason reason        = 1;   // Predefined close reason
+    string      close_message = 2;   // Human-readable description
+}
+
+// Reason for stream closure
+enum CloseReason {
+    CLOSE_REASON_UNSPECIFIED = 0;
+    NORMAL          = 1;   // Clean shutdown (e.g., meeting ended)
+    TIMEOUT         = 2;   // Stream timed out due to inactivity
+    UNAVAILABLE     = 3;   // Participant was removed from session or left the session
+    ERROR           = 4;   // Platform encountered an error
+}
+
+
+// ==========================================================================
+// Meetings-Specific Messages (Control Stream)
+// ==========================================================================
+
+/*
+ * Meetings-specific data sent on the control stream.
+ * Wraps platform-specific payloads so the core proto stays generic.
+ */
+message MeetingData {
+    oneof payload {
+        Roster roster = 1;   // Participant roster (delta or full)
+    }
+}
+
+/*
+ * Participant roster.
+ * Sent on the control stream using delta updates.
+ *   (a) First roster is a full refresh (refresh=true)
+ *   (b) Subsequent updates are deltas (refresh=false)
+ *   (c) On REQUEST_ROSTER_REFRESH, a full refresh is sent
+ *
+ * Request a full refresh if you detect a gap in sequence_number
+ * or lose internal state.
+ */
+message Roster {
+    uint64 sequence_number        = 1;   // Monotonically increasing for gap detection, starting at 1
+    bool   refresh                = 2;   // true = full refresh, false = delta
+    repeated Participant additions = 3;   // New participants
+    repeated Participant changes   = 4;   // Updated participants
+    repeated string removals       = 5;   // Removed participant IDs
+    int64  timestamp_ms            = 6;   // Roster snapshot timestamp (epoch ms), same epoch as MediaPayload
+}
+
+/*
+ * A participant in the session.
+ */
+message Participant {
+    string participant_id          = 1;     // Unique participant identifier
+    string display_name            = 2;     // Participant display name
+    bool   audio_active            = 3;     // true if participant's audio is active
+    bool   video_active            = 4;     // true if participant's video is active
+    bool   cohost                  = 5;     // whether participant is cohost or not
+    int64  joined_at_ms            = 6;     // Join timestamp (epoch ms), same epoch as MediaPayload
+    IdentityTrustLevel trust_level = 7; //participant is external, verified or unverified
+}
+
+// Participant trust level
+enum IdentityTrustLevel {
+    UNSPECIFIED    = 0;
+    INTERNAL       = 1;
+    EXTERNAL       = 2;
+    UNVERIFIED     = 3;
+}
+
+
+// ==========================================================================
+// Media Stream Request (Control Stream)
+// ==========================================================================
+
+/*
+ * Media stream request.
+ * Sent on the control stream to request audio and/or video media streams.
+ * Additive — for audio, the platform opens up to max_streams concurrent streams;
+ * for video, new streams are opened when new participant_ids are requested.
+ * Existing streams are never implicitly closed.
+ * To close a stream, half-close the response stream (gRPC onCompleted).
+ * Config changes (e.g., resolution, fps) apply to
+ * existing streams without reopening them.
+ */
+message MediaStreamRequest {
+    oneof config {
+        AudioConfig audio_config = 1;
+        VideoConfig video_config = 2;
+    }
+}
+
+/*
+ * Audio stream configuration — used in MediaStreamRequest.
+ * Specify the desired codec and stream count.
+ * Opus, Mulaw, Alaw supported. Mono only.
+ * Omit AudioConfig to leave current audio streams unchanged.
+ */
+message AudioConfig {
+    AudioCodec codec      = 1;   // Desired audio codec
+    int32      max_streams = 2;   // Desired number of audio streams. 0 to 3.
+}
+
+// Supported audio codecs
+enum AudioCodec {
+    AUDIO_CODEC_UNSPECIFIED = 0;
+    OPUS  = 1;
+    MULAW = 2;
+    ALAW  = 3;
+}
+
+/*
+ * Video stream configuration — used in MediaStreamRequest.
+ * Specify the desired codec, resolution, fps, and participant IDs.
+ * H264, SD/HD/FHD, 5-30 fps (0 = platform default 5).
+ * Omit VideoConfig to leave current video streams unchanged.
+ */
+message VideoConfig {
+    VideoCodec      codec            = 1;   // Desired video codec
+    VideoResolution max_resolution   = 2;   // Highest available; graceful downgrade
+    int32           max_fps          = 3;   // 0 = platform default (5 fps). Max 30.
+    repeated string participant_ids  = 4;   // Participant IDs to receive video for. Max 3.
+}
+
+// Supported video codecs
+enum VideoCodec {
+    VIDEO_CODEC_UNSPECIFIED = 0;
+    H264 = 1;
+}
+
+// Video resolution tiers
+enum VideoResolution {
+    VIDEO_RESOLUTION_UNSPECIFIED = 0;
+    SD  = 1;    // 480p or 360p
+    HD  = 2;    // 720p
+    FHD = 3;    // 1080p
+}
+
+
+// ==========================================================================
+// Control Commands (Control Stream)
+// ==========================================================================
+
+/*
+ * Unified command message sent on the control stream.
+ * Contains generic media controls and platform-specific commands.
+ */
+message ControlCommand {
+    oneof command {
+        MediaControl    media_control    = 1;  // Generic stream-level control
+        MeetingCommand  meeting_command  = 2;  // Meetings-specific
+    }
+}
+
+/*
+ * Generic media stream control.
+ * stream_id identifies the target media stream.
+ * Relayed to the Webex media platform, which applies the action to the target stream.
+ */
+message MediaControl {
+    MediaControlAction action = 1;   // Action to apply to the target stream
+    string stream_id          = 2;   // Identifies the target media stream
+}
+
+// Media stream control actions
+enum MediaControlAction {
+    MEDIA_CONTROL_ACTION_UNSPECIFIED = 0;
+    REQUEST_KEYFRAME = 1;   // Request an I-frame on the target video stream
+}
+
+/*
+ * Meetings-specific command sent on the control stream.
+ */
+message MeetingCommand {
+    MeetingCommandType command = 1;
+}
+
+// Meetings-specific command types
+enum MeetingCommandType {
+    MEETING_COMMAND_UNSPECIFIED = 0;
+    REQUEST_ROSTER_REFRESH      = 1;   // Request current participant roster (full refresh)
+}
+
+
+// ==========================================================================
+// Error Handling (Both Streams)
+// ==========================================================================
+
+/*
+ * Application-level error on a specific stream.
+ * Used bidirectionally:
+ *   - ControlResponse (field 3): App Developer → platform (your server reports an error).
+ *   - ControlRequest  (field 3): Platform → App Developer (platform rejects a command).
+ * Sent on the control stream; stream_id identifies the affected stream.
+ * tracking_info is optional; include it when the error relates to a
+ * specific frame or message, omit it otherwise.
+ * Note: gRPC transport errors (e.g. stream failure) surface as
+ * gRPC status codes on the respective media stream.
+ */
+message StreamError {
+    string        stream_id     = 1;   // Identifies the affected stream
+    ErrorCode     error_code    = 2;   // Predefined error category
+    string        error_message = 3;   // Human-readable description
+    TrackingInfo  tracking_info = 4;   // Identifies the data that caused the error
+}
+
+// Predefined error codes for StreamError
+enum ErrorCode {
+    ERROR_CODE_UNSPECIFIED          = 0;
+    UNSUPPORTED_MEDIA_TYPE          = 1;   // Media type not supported
+    UNSUPPORTED_CODEC               = 2;   // Codec not supported
+    INVALID_PAYLOAD                 = 3;   // Malformed or unprocessable payload
+    CAPACITY_EXCEEDED               = 4;   // Cannot accept more streams
+    PROCESSING_FAILED               = 5;   // Failed to process the data
+    CONFIGURATION_ERROR             = 6;   // Invalid or missing configuration
+    MEDIA_UNAVAILABLE               = 7;   //media is unavailable
+    INTERNAL_ERROR                  = 8;   // Unspecified internal failure
+}
+
+/*
+ * Identifies the data that caused a StreamError.
+ * Allows the platform and the app to correlate errors
+ * back to specific frames or messages.
+ */
+message TrackingInfo {
+    uint64 sequence_number = 1;   // Sequence number of the frame/message that caused the error
+    int64  timestamp_ms    = 2;   // Timestamp of the frame/message that caused the error
+}
+
