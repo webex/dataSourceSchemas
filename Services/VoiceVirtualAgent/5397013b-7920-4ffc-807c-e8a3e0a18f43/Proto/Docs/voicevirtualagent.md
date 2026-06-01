@@ -138,6 +138,7 @@ Mandatory for all request |
 | session_transcript | [TextContent](#com-cisco-wcc-ccai-media-v1-TextContent) |  | Optional. Final transcript of entire session, typically included in last response. Transcripts included in intermediate responses are ignored. |
 | session_summary | [TextContent](#com-cisco-wcc-ccai-media-v1-TextContent) |  | Optional. Summary of the session, included in the last response. Summary included in intermediate responses are ignored. SSML does not make sense for summary. Using TextContent so that language code can be used. |
 | response_type | [VoiceVAResponse.ResponseType](#com-cisco-wcc-ccai-media-v1-VoiceVAResponse-ResponseType) |  | Type of response VA is sending(Partial/Final/Chunk) |
+| disable_prompt_cancellation | [bool](#bool) |  | Indicates whether the partial automated agent reply is non-interruptible when a later reply message arrives. For example, if the agent sends music as a partial response, it cannot be canceled when this is true. Default value is false. |
 
 
 
@@ -224,4 +225,3 @@ Service definition for the Voice Virtual Agent gRPC API.
 | <a name="bool" /> bool |  | bool | boolean | boolean | bool | bool | boolean | TrueClass/FalseClass |
 | <a name="string" /> string | A string must always contain UTF-8 encoded or 7-bit ASCII text. | string | String | str/unicode | string | string | string | String (UTF-8) |
 | <a name="bytes" /> bytes | May contain any arbitrary sequence of bytes. | string | ByteString | str | []byte | ByteString | string | String (ASCII-8BIT) |
-
