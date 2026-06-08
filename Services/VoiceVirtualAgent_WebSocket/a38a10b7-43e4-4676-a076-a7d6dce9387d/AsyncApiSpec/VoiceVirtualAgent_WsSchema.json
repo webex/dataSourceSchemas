@@ -401,6 +401,11 @@
           },
           "response_type": {
             "$ref": "#/components/schemas/ResponseType"
+          },
+          "disable_prompt_cancellation": {
+            "type": "boolean",
+            "default": false,
+            "description": "Indicates whether the partial automated agent reply is non-interruptible when a later reply message arrives. For example, if the agent sends music as a partial response, it cannot be canceled when this is true. The default value is false."
           }
         },
         "required": [
