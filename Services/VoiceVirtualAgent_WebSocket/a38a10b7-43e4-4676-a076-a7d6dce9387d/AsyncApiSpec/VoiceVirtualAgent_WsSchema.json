@@ -593,13 +593,20 @@
         "additionalProperties": false,
         "properties": {
           "max_speech_timeout_msec": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Reserved for future use. Do not populate or send a value for this field."
           },
           "complete_timeout_msec": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Reserved for future use. Do not populate or send a value for this field."
           },
           "incomplete_timeout_msec": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Reserved for future use. Do not populate or send a value for this field."
+          },
+          "no_input_timeout_msec": {
+            "type": "integer",
+            "description": "Maximum time, in milliseconds, that Webex waits for the caller's first voice or DTMF input after the prompt starts. If no input is detected within this interval, Webex treats the turn as no input."
           }
         }
       },
